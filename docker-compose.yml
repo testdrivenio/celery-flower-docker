@@ -1,0 +1,37 @@
+version: '3.7'
+
+services:
+
+  redis:
+    image: redis
+    expose:
+      - 6379
+
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: ['celery', 'worker', '-A', 'app.app', '-l', 'info']
+    environment:
+      - BROKER_URL=redis://redis:6379
+      - RESULT_BACKEND=redis://redis:6379
+    depends_on:
+      - redis
+
+  flower:
+    image: mher/flower:0.9.5
+    command: ['flower', '--broker=redis://redis:6379', '--port=5555']
+    expose:
+      - 5555
+    depends_on:
+      - redis
+
+  nginx:
+    image: nginx:latest
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./htpasswd:/etc/nginx/.htpasswd
+    ports:
+      - 80:80
+    depends_on:
+      - flower
