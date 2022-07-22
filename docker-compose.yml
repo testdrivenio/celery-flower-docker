@@ -11,7 +11,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    command: ['celery', 'worker', '-A', 'app.app', '-l', 'info']
+    command: ['celery', '-A', 'app.app', 'worker', '-l', 'info']
     environment:
       - BROKER_URL=redis://redis:6379
       - RESULT_BACKEND=redis://redis:6379
@@ -19,7 +19,7 @@ services:
       - redis
 
   flower:
-    image: mher/flower:0.9.5
+    image: mher/flower:0.9.7
     command: ['flower', '--broker=redis://redis:6379', '--port=5555']
     expose:
       - 5555

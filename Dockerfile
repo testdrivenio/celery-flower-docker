@@ -1,8 +1,8 @@
-FROM python:3.9
+FROM python:3.10
 
 WORKDIR /usr/src/app
 
-RUN pip install celery[redis]==4.4.7
+RUN pip install celery[redis]==5.2.7
 
 COPY app.py .
 COPY celery_config.py .
